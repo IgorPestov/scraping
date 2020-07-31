@@ -41,6 +41,7 @@ exports.send = async (req, res) => {
     .catch(console.error);
   res.status(200).send(itemsPage);
 };
+
 // const axios = require("axios");
 // const cheerio = require("cheerio");
 
