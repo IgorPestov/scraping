@@ -66,3 +66,4 @@ exports.fetchProductList  = async (url, searchTerm) =>{
     console.log('Time: ', (Date.now() - startTime) / 1000, 's');
 }
 
+fetchProductList('https://www.amazon.in', 'Shirts');
