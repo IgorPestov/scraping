@@ -1,4 +1,6 @@
-function run (pagesToScrape) {
+const puppeteer = require("puppeteer");
+
+exports.run = (pagesToScrape) =>{
     return new Promise(async (resolve, reject) => {
         try {
             if (!pagesToScrape) {

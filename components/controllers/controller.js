@@ -1,46 +1,13 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 const {fetchProductList} = require("./controllerTest")
+const {run } = require('../controllers/test')
 exports.send = async (req, res) => {
   const { postData } = req.body;
   const items = await fetchProductList('https://www.amazon.com', postData)
-//   const URL = `https://www.amazon.com/s?k=${postData}`;
-//   const items = [];
-//  await axios(URL)
-//     .then((response) => {
-//       const html = response.data;
-//       const $ = cheerio.load(html);
-//       const pagesNumber = $("li.a-disabled").text()
-//       console.log(pagesNumber.replace(/[^0-9\.]/g, ""));      
-      
-//       const Class =
-//         ".sg-col-4-of-24.sg-col-4-of-12.sg-col-4-of-36.s-result-item.s-asin.sg-col-4-of-28.sg-col-4-of-16.sg-col.sg-col-4-of-20.sg-col-4-of-32";
-//       const ClassHelp = ".s-result-item.s-asin";
-//       $(ClassHelp).each((i, elem) => {
-//         if ($(elem).find("img").attr("src") !== undefined) {
-//           const image = $(elem).find("img").attr("src");
-//           const url = `https://www.amazon.com/${$(elem)
-//             .find("a.a-link-normal.s-no-outline")
-//             .attr("href")}`;
-//           const product = $(elem)
-//             .find(".a-size-base-plus.a-color-base.a-text-normal")
-//             .text();
-//           const price = $(elem).find(".a-offscreen").text();
-//           // const priceCent = $(elem).find(".a-price-fraction").text();
-//           items.push({
-//             product,
-//             url,
-//             image,
-//             price,
-//           });
-//           console.log(items);
-//         }
-//       });
-     
+  // const test = await run(postData)
+  // console.log(test.length)
 
-//       return items;
-//     })
-//     .catch(console.error);
  res.status(200).send(items);
 };
 
