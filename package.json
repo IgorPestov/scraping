@@ -11,11 +11,15 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "async": "^3.2.0",
         "axios": "^0.19.2",
         "body-parser": "^1.19.0",
         "cheerio": "^1.0.0-rc.3",
+        "child": "0.0.3",
+        "cluster": "^0.7.7",
         "cors": "^2.8.5",
         "express": "^4.17.1",
+        "process": "^0.11.10",
         "puppeteer": "^5.2.1",
         "user-agents": "^1.0.559"
     }

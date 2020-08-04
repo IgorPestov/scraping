@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 const userAgent = require("user-agents");
 
-const fetchProductList = async (url, searchTerm) => {
+const fetchProductList1 = async (url, searchTerm) => {
 
   let startTime = Date.now();
   const browser = await puppeteer.launch({
@@ -28,7 +28,7 @@ const fetchProductList = async (url, searchTerm) => {
     let currentPage = lastPages.map((el) => el.innerText);
     return currentPage[1];
   });
-  console.log("PAGES controllerTest", pages);
+  console.log("PAGES testtest", pages);
   return new Promise(async (resolve, reject) => {
 
     try {
@@ -107,4 +107,4 @@ const fetchProductList = async (url, searchTerm) => {
     }
   });
 };
-module.exports = fetchProductList;
+module.exports = fetchProductList1;

@@ -1,6 +1,6 @@
 const puppeteer = require("puppeteer");
 
-exports.run = (pagesToScrape) =>{
+ const run = (pagesToScrape) =>{
     return new Promise(async (resolve, reject) => {
         try {
             if (!pagesToScrape) {
@@ -44,8 +44,11 @@ exports.run = (pagesToScrape) =>{
             }
             browser.close();
             return resolve(urls);
+            return 
         } catch (e) {
             return reject(e);
         }
     })
 }
+module.exports = run;
+
