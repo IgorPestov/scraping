@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 const userAgent = require("user-agents");
 
-const fetchProductList1 = async (url, searchTerm) => {
+const ebay = async (url, searchTerm) => {
 
   let startTime = Date.now();
   const browser = await puppeteer.launch({
@@ -13,20 +13,19 @@ const fetchProductList1 = async (url, searchTerm) => {
 
   await page.setUserAgent(userAgent.toString());
   await page.goto(url, { waitUntil: "networkidle2" });
-
-  await page.waitFor('input[name="field-keywords"]');
+  await page.waitFor('input[name="_nkw"]');
   await page.evaluate(
     (val) =>
-      (document.querySelector('input[name="field-keywords"]').value = val),
+      (document.querySelector('input[name="_nkw"]').value = val),
     searchTerm
-  );
-  await page.click("div.nav-search-submit.nav-sprite");
-  await page.waitFor('div[data-cel-widget^="search_result_"]');
-  await page.waitFor("li.a-disabled");
+  ); 
+  // await page.click('input.btn.btn-prim.gh-spr');
+  await page.waitFor('li[data-view^="mi:1686|iid:"]');
+  await page.waitFor('li[class="pagination__item"]');
   const pages = await page.evaluate(() => {
-    let lastPages = Array.from(document.querySelectorAll("li.a-disabled"));
+    let lastPages = Array.from(document.querySelectorAll('li[class="pagination__item"]'));
     let currentPage = lastPages.map((el) => el.innerText);
-    return currentPage[1];
+    return currentPage;
   });
   console.log("PAGES testtest", pages);
   return new Promise(async (resolve, reject) => {
@@ -107,4 +106,13 @@ const fetchProductList1 = async (url, searchTerm) => {
     }
   });
 };
-module.exports = fetchProductList1;
+module.exports = ebay;
+process.on('message' ,async (data)=> {
+  console.log('Child process received START message');
+
+  // if(data.message === "START") {
+    const test = await ebay(data.url, data.data)
+    process.send(test)
+    process.exit();
+  // }
+})

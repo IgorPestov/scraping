@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 const userAgent = require("user-agents");
 
-const fetchProductList = async (url, searchTerm) => {
+const amazon = async (url, searchTerm) => {
 
   let startTime = Date.now();
   const browser = await puppeteer.launch({
@@ -107,4 +107,14 @@ const fetchProductList = async (url, searchTerm) => {
     }
   });
 };
-module.exports = fetchProductList;
+module.exports = amazon;
+ process.on ('message' ,async (data)  => {
+  console.log('Child process received START message');
+
+  // if(data.message === "START")  {
+
+    const test = await amazon(data.url, data.data)
+    process.send(test)
+    process.exit();
+  // }
+})
