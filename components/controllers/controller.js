@@ -1,4 +1,4 @@
-// const fetchProductList = require("./amazon");
+const amazon = require("./amazon");
 const ebay = require("./ebay");
 const { fork } = require("child_process");
 
@@ -18,7 +18,7 @@ exports.send = async (req, res) => {
     //   if (check1 && check2) {
     //     res.send(items);
     //   }
-    //   console.log(message.length, "controllerTest");
+    //   // console.log(message.length, "amazon");
     // });
     // ebay.on("message", (message) => {
     //   check2 = true;
@@ -27,7 +27,7 @@ exports.send = async (req, res) => {
     //   if (check1 && check2) {
     //     res.send(items);
     //   }
-    //   console.log(message.length, "testtest");
+    //   // console.log(message.length, "ebay");
     // });
 
     // amazon.send({
@@ -40,18 +40,16 @@ exports.send = async (req, res) => {
     //   data: postData,
     //   url: "https://www.ebay.com/",
     // });
-    //   const items = await fetchProductList("https://www.amazon.com", postData);
-      const itemsss = await ebay("https://www.ebay.com/", postData);
-    //   console.log(items.length);
-      console.log(itemsss.length);
-    //   if (items.length && itemsss.length) {
-    //     const itemsPages = [...items, ...itemsss];
+      // const items = await amazon("https://www.amazon.com", postData);
+      const itemsss = await ebay("https://www.ebay.com", postData);
+      // console.log(items.length);
+      // if (items.length && itemsss.length) {
+      //   const itemsPages = [...items, ...itemsss];
 
-    //     console.log("work")
-    //     itemsPages1 = itemsPages.concat(items);
-    //     itemsPages2 = itemsPages1.concat(itemsss)
-
-    //     res.status(200).send(itemsPages);
-    //   }
+      //   console.log("work")
+      //   itemsPages1 = itemsPages.concat(items);
+      //   itemsPages2 = itemsPages1.concat(itemsss)
+//  res.status(200).send(items)
+      // }
   
 };

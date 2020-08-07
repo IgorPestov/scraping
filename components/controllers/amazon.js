@@ -11,7 +11,7 @@ const amazon = async (url, searchTerm) => {
 
   const page = await browser.newPage();
 
-  await page.setUserAgent(userAgent.toString());
+  // await page.setUserAgent(userAgent.toString());
   await page.goto(url, { waitUntil: "networkidle2" });
 
   await page.waitFor('input[name="field-keywords"]');
@@ -28,21 +28,21 @@ const amazon = async (url, searchTerm) => {
     let currentPage = lastPages.map((el) => el.innerText);
     return currentPage[1];
   });
-  console.log("PAGES controllerTest", pages);
   return new Promise(async (resolve, reject) => {
 
     try {
       let currentPage = 1;
-      let results = [];
+      let results = [];       
       while (currentPage <= pages) {
-        await page.waitForSelector('div[data-cel-widget^="search_result_"]');
+        await page.waitFor('div[data-cel-widget^="search_result_"]');
+         await page.waitFor(600)
         const result = await page.evaluate(() => {
           let totalSearchResults = Array.from(
             document.querySelectorAll('div[data-cel-widget^="search_result_"]')
           ).length;
 
           let productsList = [];
-
+         
           for (let i = 1; i < totalSearchResults - 1; i++) {
             let product = {
               product: "",
@@ -86,12 +86,11 @@ const amazon = async (url, searchTerm) => {
         });
 
         results = results.concat(result);
-
           if (currentPage < pages) {
             await Promise.all([
               await page.waitForSelector("li.a-last"),
               await page.click("li.a-last"),
-              await page.waitForSelector(
+              await page.waitFor(
                 'div[data-cel-widget^="search_result_"]'
               ),
             ]);
@@ -101,6 +100,7 @@ const amazon = async (url, searchTerm) => {
       }
       browser.close();
       console.log("Time: ", (Date.now() - startTime) / 1000, "s");
+
       return resolve(results);
     } catch (e) {
       return reject(e);

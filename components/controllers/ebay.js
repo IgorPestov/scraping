@@ -2,42 +2,43 @@ const puppeteer = require("puppeteer");
 const userAgent = require("user-agents");
 
 const ebay = async (url, searchTerm) => {
-
   let startTime = Date.now();
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: false,
     defaultViewport: null,
   });
-
   const page = await browser.newPage();
-
-  await page.setUserAgent(userAgent.toString());
   await page.goto(url, { waitUntil: "networkidle2" });
-  await page.waitFor('input[name="_nkw"]');
-  await page.evaluate(
-    (val) =>
-      (document.querySelector('input[name="_nkw"]').value = val),
-    searchTerm
-  ); 
-  // await page.click('input.btn.btn-prim.gh-spr');
-  await page.waitFor('li[data-view^="mi:1686|iid:"]');
-  await page.waitFor('li[class="pagination__item"]');
-  const pages = await page.evaluate(() => {
-    let lastPages = Array.from(document.querySelectorAll('li[class="pagination__item"]'));
-    let currentPage = lastPages.map((el) => el.innerText);
-    return currentPage;
-  });
-  console.log("PAGES testtest", pages);
-  return new Promise(async (resolve, reject) => {
 
+  await page.waitFor('input[name="_nkw"]');
+
+  await page.evaluate(
+    (val) => (document.querySelector('input[name="_nkw"]').value = val),
+    searchTerm
+  );
+  await page.click('input[type="submit"]');
+
+
+  await page.waitFor('a[class^="pagination__item"]');
+  await page.click('svg[aria-labelledby="s0-13-11-6-3-SEARCH_PAGINATION_MODEL_V2-answer-21-3-3-button-2-7-text"')
+  await page.click('svg[aria-labelledby="s0-13-11-6-3-SEARCH_PAGINATION_MODEL_V2-answer-21-3-3-content-5[2]-text"] ')
+  await page.waitFor('li[data-view^="mi:1686|iid:"]');
+  const pages = await page.evaluate(() => {
+    let lastPages = Array.from(document.querySelectorAll('button[class^="fake-menu-button__button expand-btn expand-btn--small expand-btn--secondary"]'));
+    let currentPage = lastPages.map((el) => el);
+    return currentPage[5];
+  });
+  console.log(pages)
+  return new Promise(async (resolve, reject) => {
     try {
       let currentPage = 1;
+      const pages = 2;
       let results = [];
-      while (currentPage <= pages) {
-        await page.waitForSelector('div[data-cel-widget^="search_result_"]');
+      while (!!await page.waitFor('a[class^="pagination__item"]')) {
+        await page.waitForSelector('li[data-view^="mi:1686|iid:"]');
         const result = await page.evaluate(() => {
           let totalSearchResults = Array.from(
-            document.querySelectorAll('div[data-cel-widget^="search_result_"]')
+            document.querySelectorAll('li[data-view^="mi:1686|iid:"]')
           ).length;
 
           let productsList = [];
@@ -46,31 +47,23 @@ const ebay = async (url, searchTerm) => {
             let product = {
               product: "",
             };
-            let emptyProductMeta = false;
-
-            let productNodes = Array.from(
-              document.querySelectorAll(
-                `div[data-cel-widget="search_result_${i}"] span.a-size-base-plus.a-color-base`
-              )
+      
+            let rawProduct = document.querySelector(
+              `li[data-view="mi:1686|iid:${i}"] h3.s-item__title`
             );
-
-            let productsDetails = productNodes.map((el) => el.innerText);
-            if (!emptyProductMeta) {
-              product.product = productsDetails[0];
-            }
-
+            product.product = rawProduct ? rawProduct.innerText : "";
             let rawImage = document.querySelector(
-              `div[data-cel-widget="search_result_${i}"] .s-image`
+              `li[data-view="mi:1686|iid:${i}"] img.s-item__image-img`
             );
             product.image = rawImage ? rawImage.src : "";
 
             let rawUrl = document.querySelector(
-              `div[data-cel-widget="search_result_${i}"] a.a-link-normal`
+              `li[data-view="mi:1686|iid:${i}"] a.s-item__link`
             );
             product.url = rawUrl ? rawUrl.href : "";
 
             let rawPrice = document.querySelector(
-              `div[data-cel-widget="search_result_${i}"] span.a-offscreen`
+              `li[data-view="mi:1686|iid:${i}"] span.s-item__price`
             );
             product.price = rawPrice ? rawPrice.innerText : "";
 
@@ -83,18 +76,17 @@ const ebay = async (url, searchTerm) => {
 
           return productsList;
         });
-
         results = results.concat(result);
 
-          if (currentPage < pages) {
-            await Promise.all([
-              await page.waitForSelector("li.a-last"),
-              await page.click("li.a-last"),
-              await page.waitForSelector(
-                'div[data-cel-widget^="search_result_"]'
-              ),
-            ]);
-          }
+        if (!!await page.waitFor('a[class^="pagination__item"]')) {
+          await Promise.all([
+            await page.waitForSelector("a.pagination__next"),
+            await page.click("a.pagination__next"),
+            await page.waitForSelector(
+              'li[data-view^="mi:1686|iid:"]'
+            ),
+          ]);
+        }
 
         currentPage++;
       }
